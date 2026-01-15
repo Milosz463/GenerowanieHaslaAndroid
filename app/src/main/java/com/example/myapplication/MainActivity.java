@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -40,12 +41,55 @@ EditText editTextWpisana;
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(MainActivity.this, GenerujHaslo(10,true,true,true,true), Toast.LENGTH_SHORT).show();
+                        boolean male=checkBoxMala.isChecked();
+                        boolean duze=checkBoxDuza.isChecked();
+                        boolean specjalne=checkBoxSpecjalne.isChecked();
+                        boolean liczby=checkBoxCyfry.isChecked();
+                        int dlugoscHasla=Integer.parseInt(editTextWpisana.getText().toString());
+                        String haslo=GenerujHaslo(dlugoscHasla,male,duze,specjalne,liczby);
+                        haslo=Fyrlanie(haslo);
+                        textViewHaslo.setText(haslo);
+                        int liczbaSpelnionychWarunkow=0;
+                        if(male){
+                            liczbaSpelnionychWarunkow++;
+                        }
+                        if(duze){
+                            liczbaSpelnionychWarunkow++;
+                        }
+                        if(liczby){
+                            liczbaSpelnionychWarunkow++;
+                        }
+                        if (specjalne){
+                            liczbaSpelnionychWarunkow++;
+                        }
+                        if(liczbaSpelnionychWarunkow==4 && haslo.length() >=12){
+                            textViewMocHasla.setText("Silne haslo");
+                            textViewHaslo.setTextColor(Color.GREEN);
+                        }else if(liczbaSpelnionychWarunkow>=3&&haslo.length()>8){
+                            textViewMocHasla.setText("srednie haslo");
+                            textViewHaslo.setTextColor(Color.YELLOW);
+                        }else{
+                            textViewMocHasla.setText("Slabe haslo");
+                            textViewHaslo.setTextColor(Color.RED);
+                        }
+
                     }
                 }
         );
 
     }
+
+    /**
+     * Nazwa metody generujHaslo
+     * Opis-metoda sluzaca do generowania hasla o okreslonej dlugosci o danymi wartosciami
+     *parametry
+     *  liczbaLiter-liczba calkowita przechowująca dlugość hasła
+     *  male-zmienna logiczna określaąca czy w haśle występują małe litery
+     *  duze-zmienna logiczna określaąca czy w haśle występują duże litery
+     *  specjalne-zmienna logiczna określaąca czy w haśle występują znaki specjalne
+     *  liczbyy-zmienna logiczna określaąca czy w haśle występują liczby
+     * zwracana wartosc-haslo tekst w ktorym znajduja sie wylosowane litery
+     */
     private String GenerujHaslo (int liczbaLiter,boolean male,boolean duze,boolean specjalne,boolean liczbyy){
         String haslo="";
         String maleLiatery="qwerty7uiopasdfghjklzxcvbnm";
@@ -79,6 +123,13 @@ EditText editTextWpisana;
                int indeks=random.nextInt(wszystkieZnaki.length());
                haslo+=wszystkieZnaki.charAt(indeks);
            }
+        /**
+         * Nazwa metody fyrlanie
+         * Opis-losuje wygenerowane litery
+         * parametry
+         * slowo-zmienna tekstowa w ktore beda mieszane znaki
+         * zwaca wyfyrlane-kejst w ktorym sa wymieszane znaki
+         */
         return haslo;
         }
         public String Fyrlanie(String slowo){
@@ -87,11 +138,13 @@ EditText editTextWpisana;
         while(slowo.length()>2){
             int i=random.nextInt(slowo.length()-2)+1;
             wyfyrlane+=slowo.charAt(i);
-            slowo=slowo.substring(0,i)+slowo.substring(i,1);
+            slowo=slowo.substring(0,i)+slowo.substring(i+1);
         }
         int pierwszyIndeks=random.nextInt(wyfyrlane.length());
         wyfyrlane=wyfyrlane.substring(0,pierwszyIndeks)+slowo.charAt(0)+wyfyrlane.substring(pierwszyIndeks);
 
+            pierwszyIndeks = random.nextInt(wyfyrlane.length());
+            wyfyrlane = wyfyrlane.substring(0,pierwszyIndeks) + slowo.charAt(1)+ wyfyrlane.substring(pierwszyIndeks);
         return wyfyrlane;
         }
 
